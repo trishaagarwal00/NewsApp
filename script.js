@@ -67,6 +67,7 @@
 //     curSelectedNav?.classList.remove("active");
 //     curSelectedNav = null;
 // });const API_KEY = "72f41317b43a4a1d82a968d1d1ae528d";
+const API_KEY = "72f41317b43a4a1d82a968d1d1ae528d";
 const url = "https://newsapi.org/v2/everything?q=";
 
 window.addEventListener("load", () => fetchNews("India"));
@@ -76,21 +77,23 @@ function reload() {
 }
 
 async function fetchNews(query) {
-    const apiUrl = `${url}${query}&apiKey=${API_KEY}`;
+    try {
+        const apiUrl = `${url}${query}&apiKey=${API_KEY}`;
 
-    // ✅ CORS proxy (fix for deployed app)
-    const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(apiUrl)}`;
+        //  WORKING PROXY (replace AllOrigins)
+        const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(apiUrl)}`;
 
-    const res = await fetch(proxyUrl);
-    const data = await res.json();
+        const res = await fetch(proxyUrl);
+        const data = await res.json();
 
-    const parsedData = JSON.parse(data.contents);
-
-    bindData(parsedData.articles);
+        bindData(data.articles);
+    } catch (error) {
+        console.error("Error fetching news:", error);
+    }
 }
 
 function bindData(articles) {
-    if (!articles) return; // ✅ error fix
+    if (!articles) return; // safety
 
     const cardsContainer = document.getElementById("cards-container");
     const newsCardTemplate = document.getElementById("template-news-card");
