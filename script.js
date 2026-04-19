@@ -67,8 +67,7 @@
 //     curSelectedNav?.classList.remove("active");
 //     curSelectedNav = null;
 // });
-const API_KEY = "208ca178446d0b63a76358ed1d7401df"; 
-const url = "https://gnews.io/api/v4/search?q=";
+const API_KEY = "4k3F-5xd7kubVYjUGly98tvucBjKXNKmbmuqarFkQ08HW5hQ"; 
 
 window.addEventListener("load", () => fetchNews("India"));
 
@@ -78,12 +77,13 @@ function reload() {
 
 async function fetchNews(query) {
     try {
-        const apiUrl = `${url}${query}&lang=en&apikey=${API_KEY}`;
+        const res = await fetch(
+            `https://api.currentsapi.services/v1/search?keywords=${query}&apiKey=${API_KEY}`
+        );
 
-        const res = await fetch(apiUrl);
         const data = await res.json();
 
-        bindData(data.articles);
+        bindData(data.news);
     } catch (error) {
         console.error("Error fetching news:", error);
     }
@@ -114,11 +114,11 @@ function fillDataInCard(cardClone, article) {
 
     newsImg.src = article.image;
     newsTitle.innerHTML = article.title;
-    newsDesc.innerHTML = article.description;
+    newsDesc.innerHTML = article.description || "No description available";
 
-    const date = new Date(article.publishedAt).toLocaleString("en-US");
+    const date = new Date(article.published).toLocaleString("en-US");
 
-    newsSource.innerHTML = `${article.source.name} · ${date}`;
+    newsSource.innerHTML = `${article.author || "Unknown"} · ${date}`;
 
     cardClone.firstElementChild.addEventListener("click", () => {
         window.open(article.url, "_blank");
