@@ -67,7 +67,9 @@
 //     curSelectedNav?.classList.remove("active");
 //     curSelectedNav = null;
 // });
-const API_KEY = "4k3F-5xd7kubVYjUGly98tvucBjKXNKmbmuqarFkQ08HW5hQ"; 
+
+const API_KEY = "4k3F-5xd7kubVYjUGly98tvucBjKXNKmbmuqarFkQ08HW5hQ";
+const url = "https://api.currentsapi.services/v1/search?keywords=";
 
 window.addEventListener("load", () => fetchNews("India"));
 
@@ -76,29 +78,20 @@ function reload() {
 }
 
 async function fetchNews(query) {
-    try {
-        const res = await fetch(
-            `https://api.currentsapi.services/v1/search?keywords=${query}&apiKey=${API_KEY}`
-        );
+    const res = await fetch(`${url}${query}&apiKey=${API_KEY}`);
+    const data = await res.json();
 
-        const data = await res.json();
-
-        bindData(data.news);
-    } catch (error) {
-        console.error("Error fetching news:", error);
-    }
+    bindData(data.news); //  change: articles → news
 }
 
 function bindData(articles) {
-    if (!articles) return;
-
     const cardsContainer = document.getElementById("cards-container");
     const newsCardTemplate = document.getElementById("template-news-card");
 
     cardsContainer.innerHTML = "";
 
     articles.forEach((article) => {
-        if (!article.image) return;
+        if (!article.image) return; //  change: urlToImage → image
 
         const cardClone = newsCardTemplate.content.cloneNode(true);
         fillDataInCard(cardClone, article);
@@ -112,13 +105,13 @@ function fillDataInCard(cardClone, article) {
     const newsSource = cardClone.querySelector("#news-source");
     const newsDesc = cardClone.querySelector("#news-desc");
 
-    newsImg.src = article.image;
+    newsImg.src = article.image; // change
     newsTitle.innerHTML = article.title;
-    newsDesc.innerHTML = article.description || "No description available";
+    newsDesc.innerHTML = article.description;
 
-    const date = new Date(article.published).toLocaleString("en-US");
+    const date = new Date(article.published).toLocaleString("en-US"); //  change
 
-    newsSource.innerHTML = `${article.author || "Unknown"} · ${date}`;
+    newsSource.innerHTML = `${article.author} · ${date}`; //  change
 
     cardClone.firstElementChild.addEventListener("click", () => {
         window.open(article.url, "_blank");
